@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ClerkProvider, SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
+import { Analytics } from "@vercel/analytics/next";
 import { Navigation } from "@/components/Navigation";
 import { Logo } from "@/components/Logo";
 import "./globals.css";
@@ -55,6 +56,7 @@ export default function RootLayout({
           </header>
           <main>{children}</main>
           <Navigation />
+          <Analytics />
         </ClerkProvider>
       </body>
     </html>
