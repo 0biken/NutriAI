@@ -1,0 +1,215 @@
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  .wrap{padding:1.5rem 0;font-family:var(--font-sans)}
+  .section-label{font-size:11px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--color-text-secondary);margin:2.5rem 0 .85rem}
+  .section-label:first-child{margin-top:0}
+
+  .hero-block{background:#0D1F0F;border-radius:16px;padding:2.5rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  .logo-mark{display:flex;align-items:center;gap:10px}
+  .logo-n{width:44px;height:44px;background:#A8E063;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500;color:#0D1F0F;flex-shrink:0}
+  .logo-wordmark{font-size:26px;font-weight:500;color:#F5F0E8;letter-spacing:-.02em}
+  .logo-tag{font-size:12px;color:#6DBF5A;margin-top:2px;letter-spacing:.01em}
+  .hero-tagline{font-size:13px;color:#8BA882;text-align:right;max-width:220px;line-height:1.6}
+
+  .swatch-row{display:flex;gap:8px;flex-wrap:wrap}
+  .swatch{border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;justify-content:flex-end;min-width:88px;flex:1}
+  .swatch-name{font-size:11px;font-weight:500;margin-bottom:2px}
+  .swatch-hex{font-size:10px;opacity:.75}
+  .swatch-role{font-size:10px;margin-top:6px;opacity:.65}
+
+  .type-block{display:flex;flex-direction:column;gap:16px}
+  .type-row{display:flex;align-items:baseline;gap:16px;padding:14px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+  .type-row:last-child{border-bottom:none}
+  .type-meta{font-size:11px;color:var(--color-text-secondary);width:140px;flex-shrink:0;line-height:1.5}
+  .type-sample-xl{font-size:32px;font-weight:500;color:#0D1F0F;letter-spacing:-.03em;line-height:1.1}
+  .type-sample-h1{font-size:22px;font-weight:500;color:#0D1F0F;letter-spacing:-.02em;line-height:1.2}
+  .type-sample-h2{font-size:18px;font-weight:500;color:#0D1F0F;letter-spacing:-.01em}
+  .type-sample-body{font-size:15px;color:#2C3A2A;line-height:1.65}
+  .type-sample-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#3B6D11}
+  .type-sample-ui{font-size:13px;color:#2C3A2A}
+
+  .tone-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+  .tone-card{background:var(--color-background-secondary);border-radius:10px;padding:1rem;border:0.5px solid var(--color-border-tertiary)}
+  .tone-card .word{font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px}
+  .tone-card .def{font-size:12px;color:var(--color-text-secondary);line-height:1.55}
+
+  .comp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  .comp-card{border-radius:10px;padding:1rem 1.1rem;border:0.5px solid var(--color-border-tertiary)}
+  .comp-card.do{background:#EAF3DE}
+  .comp-card.dont{background:#FAECE7}
+  .comp-card .tag{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+  .comp-card.do .tag{color:#3B6D11}
+  .comp-card.dont .tag{color:#712B13}
+  .comp-card .copy{font-size:13px;line-height:1.55;color:#2C2C2A}
+
+  .motion-list{display:flex;flex-direction:column;gap:8px}
+  .motion-item{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:var(--color-background-secondary);border-radius:8px;border:0.5px solid var(--color-border-tertiary)}
+  .motion-icon{color:var(--color-text-secondary);font-size:18px;flex-shrink:0;margin-top:1px}
+  .motion-text{font-size:13px;color:var(--color-text-primary);line-height:1.5}
+  .motion-text span{color:var(--color-text-secondary);font-size:12px;display:block;margin-top:2px}
+
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .badge{font-size:11px;font-weight:500;padding:4px 12px;border-radius:99px}
+  .b-green{background:#EAF3DE;color:#27500A}
+  .b-amber{background:#FAEEDA;color:#633806}
+  .b-teal{background:#E1F5EE;color:#085041}
+  .b-dark{background:#0D1F0F;color:#A8E063}
+
+  @media(prefers-color-scheme:dark){
+    .type-sample-xl,.type-sample-h1,.type-sample-h2{color:#F5F0E8}
+    .type-sample-body,.type-sample-ui,.comp-card .copy{color:#C8D4C0}
+    .type-sample-label{color:#9FE1CB}
+    .comp-card.do{background:#0D2A10}
+    .comp-card.dont{background:#2A0D0D}
+    .comp-card.do .tag{color:#9FE1CB}
+    .comp-card.dont .tag{color:#F5C4B3}
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="hero-block">
+    <div>
+      <div class="logo-mark">
+        <div class="logo-n">N</div>
+        <div>
+          <div class="logo-wordmark">NutriAI</div>
+          <div class="logo-tag">Your AI nutrition partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-tagline">Built for Nigerian bodies.<br>Priced for Nigerian budgets.</div>
+  </div>
+
+  <div class="section-label">Color system</div>
+  <div class="swatch-row">
+    <div class="swatch" style="background:#0D1F0F;height:90px">
+      <div class="swatch-name" style="color:#A8E063">Forest night</div>
+      <div class="swatch-hex" style="color:#6DBF5A">#0D1F0F</div>
+      <div class="swatch-role" style="color:#6DBF5A">Primary background / hero</div>
+    </div>
+    <div class="swatch" style="background:#A8E063;height:90px">
+      <div class="swatch-name" style="color:#0D1F0F">Vitality green</div>
+      <div class="swatch-hex" style="color:#2C4A10">#A8E063</div>
+      <div class="swatch-role" style="color:#2C4A10">Primary accent / CTA</div>
+    </div>
+    <div class="swatch" style="background:#F5F0E8;height:90px">
+      <div class="swatch-name" style="color:#2C3A2A">Warm white</div>
+      <div class="swatch-hex" style="color:#4A5A44">#F5F0E8</div>
+      <div class="swatch-role" style="color:#4A5A44">Light sections / text on dark</div>
+    </div>
+    <div class="swatch" style="background:#E8651A;height:90px">
+      <div class="swatch-name" style="color:#F5F0E8">Suya orange</div>
+      <div class="swatch-hex" style="color:#F5F0E8">#E8651A</div>
+      <div class="swatch-role" style="color:#F5F0E8">Energy / highlights / alerts</div>
+    </div>
+    <div class="swatch" style="background:#2C3A2A;height:90px">
+      <div class="swatch-name" style="color:#A8E063">Deep forest</div>
+      <div class="swatch-hex" style="color:#6DBF5A">#2C3A2A</div>
+      <div class="swatch-role" style="color:#6DBF5A">Cards on dark / secondary surfaces</div>
+    </div>
+  </div>
+
+  <div class="section-label">Typography</div>
+  <div class="type-block">
+    <div class="type-row">
+      <div class="type-meta">Display<br>500 · −3% tracking</div>
+      <div class="type-sample-xl">Eat like yourself.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Heading 1<br>500 · −2% tracking</div>
+      <div class="type-sample-h1">Your body. Your food. Your plan.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Heading 2<br>500 · −1% tracking</div>
+      <div class="type-sample-h2">Cycle-synced meal planning</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Body<br>400 · normal</div>
+      <div class="type-sample-body">NutriAI understands that egusi soup — not a kale salad — is your realistic starting point for change.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Label<br>500 · +8% tracking</div>
+      <div class="type-sample-label">Snap &amp; scan</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">UI text<br>400 · normal</div>
+      <div class="type-sample-ui">Logged: Egusi soup · 1 medium bowl · 342 kcal</div>
+    </div>
+  </div>
+
+  <div class="section-label">Brand voice</div>
+  <div class="tone-grid">
+    <div class="tone-card">
+      <div class="word">Confident</div>
+      <div class="def">Speaks with authority. No hedging. "NutriAI knows your PCOS" — not "may help with."</div>
+    </div>
+    <div class="tone-card">
+      <div class="word">Cultural</div>
+      <div class="def">Nigerian food is the default language. Egusi before quinoa. Always.</div>
+    </div>
+    <div class="tone-card">
+      <div class="word">Direct</div>
+      <div class="def">Short sentences. Active verbs. Log it. Track it. Eat better.</div>
+    </div>
+    <div class="tone-card">
+      <div class="word">Warm</div>
+      <div class="def">Knowledgeable friend energy, not clinical lecturing. Science that sounds human.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Copy — do / don't</div>
+  <div class="comp-row">
+    <div class="comp-card do"><div class="tag">Do</div><div class="copy">"Your luteal phase starts today. Add plantain to lunch."</div></div>
+    <div class="comp-card dont"><div class="tag">Don't</div><div class="copy">"It may be beneficial to consider increasing magnesium-rich food intake."</div></div>
+  </div>
+  <div class="comp-row">
+    <div class="comp-card do"><div class="tag">Do</div><div class="copy">"Snap your jollof. We'll do the maths."</div></div>
+    <div class="comp-card dont"><div class="tag">Don't</div><div class="copy">"Use our AI-powered photo recognition feature to log your meal."</div></div>
+  </div>
+  <div class="comp-row">
+    <div class="comp-card do"><div class="tag">Do</div><div class="copy">"₦15,000 budget? Still eat well. Here's how."</div></div>
+    <div class="comp-card dont"><div class="tag">Don't</div><div class="copy">"Affordable meal plans available for budget-conscious users."</div></div>
+  </div>
+
+  <div class="section-label">Motion principles</div>
+  <div class="motion-list">
+    <div class="motion-item">
+      <i class="ti ti-arrow-right motion-icon" aria-hidden="true"></i>
+      <div class="motion-text">Scroll-pinned feature reveals — one feature owns the screen at a time
+        <span>Same pattern as alma.food. Each section (Snap &amp; Scan, Cycle Sync, Budget) gets its own full-viewport moment.</span>
+      </div>
+    </div>
+    <div class="motion-item">
+      <i class="ti ti-clock motion-icon" aria-hidden="true"></i>
+      <div class="motion-text">Slow, deliberate easing — 600–900ms transitions, cubic-bezier(.22,1,.36,1)
+        <span>Speed communicates confidence. Nothing snaps or bounces.</span>
+      </div>
+    </div>
+    <div class="motion-item">
+      <i class="ti ti-eye motion-icon" aria-hidden="true"></i>
+      <div class="motion-text">Text enters before visuals — headline lands first, then the app frame animates in
+        <span>Forces the message to register before the aesthetic takes over.</span>
+      </div>
+    </div>
+    <div class="motion-item">
+      <i class="ti ti-chart-bar motion-icon" aria-hidden="true"></i>
+      <div class="motion-text">Nutrient bars count up on scroll entry — never on page load
+        <span>Data should feel earned, not dumped. Animate numbers when they enter the viewport.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">UI badges &amp; tags</div>
+  <div class="badge-row">
+    <span class="badge b-green">PCOS protocol</span>
+    <span class="badge b-amber">Luteal phase</span>
+    <span class="badge b-teal">Pregnancy</span>
+    <span class="badge b-dark">Premium</span>
+    <span class="badge b-green">Hypertension</span>
+    <span class="badge b-amber">Budget plan</span>
+    <span class="badge b-teal">Cycle sync</span>
+  </div>
+
+</div>

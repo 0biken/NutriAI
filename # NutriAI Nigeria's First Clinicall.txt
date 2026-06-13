@@ -1,0 +1,145 @@
+# NutriAI: Nigeria's First Clinically Intelligent Nutrition Platform
+
+**NutriAI is the first nutrition application that understands Nigerian food, respects your menstrual cycle, and adapts to your health condition - because eating well should not require overthinking.**
+
+## Executive Summary
+
+NutriAI is a clinically intelligent, AI-powered nutrition platform built exclusively around the bodies, budgets, and diets of Nigerians. It represents a fundamental shift in dietary health management by combining a living Nigerian food database, condition-specific clinical protocols, cycle-synced planning, and an adaptive AI engine. Crucially, this is delivered via a lightweight mobile experience embedded directly in OPay's financial infrastructure.
+
+Where existing global apps treat nutrition as a universal problem, NutriAI treats it as deeply personal. A 26-year-old woman managing PCOS in Ibadan and a 52-year-old hypertensive man in Kano require vastly different plans. NutriAI understands their unique physiology and recognizes that _egusi_ soup, not a kale salad, is the realistic starting point.
+
+## Background and Context
+
+Nigeria faces a compounding nutritional crisis. Diet-related chronic diseases are rising at an alarming rate: hypertension affects approximately 38% of adults, type 2 diabetes is climbing, and urban obesity is accelerating. Despite heightened public awareness around healthy eating, behavioral change stalls because no practical tool exists for Nigerian realities.
+
+Existing global apps-like MyFitnessPal or Noom-were built for foreign bodies and budgets. They ignore local staples, menstrual cycle shifts, communal cooking, and strict financial caps, such as a university student's ₦15,000 monthly food budget. Consequently, a massive market of over 100 million Nigerians-students, professionals, pregnant women, and those managing chronic illnesses-remains entirely unserved. NutriAI is built for all of them.
+
+## The Problem Statement
+
+Five compounding failures produce consistently poor nutritional outcomes across Nigerian user groups:
+
+- **Cultural Irrelevance:** Existing applications do not recognize or know how to portion Nigerian foods.
+- **Clinical Bluntness:** Generic, one-size-fits-all advice ignores the radically different physiological needs of diabetics, pregnant women, or athletes.
+- **No Hormonal Intelligence:** Menstrual cycle-synced nutrition-which impacts energy, cravings, and metabolism-is absent from the market.
+- **Budget Blindness:** Recommendations divorced from financial reality are simply ignored.
+- **No Learning:** Static platforms fail to adapt to user habits, restarting from a blank state every session.
+
+NutriAI is meticulously engineered to eliminate these five failures.
+
+## The Proposed Solution
+
+NutriAI is a mobile-first clinical nutrition platform. Following a specific onboarding process capturing health, cycle, budget, and fitness data, the NutriAI engine generates:
+
+- Personalized meal plans utilizing exclusively Nigerian ingredients.
+- A nutrient tracker calibrated to precise clinical targets.
+- Scan-to-identify functionality for local dishes.
+- Adaptive recommendations that evolve with user preferences.
+- Cycle-phase-specific nutrition adjustments for female users.
+- Clinical dietary protocols for diagnosed conditions.
+- Budget-optimized meal and substitute recommendations.
+- Consolidated household plans for multi-member management.
+- A climate-aligned hydration tracker.
+
+## Targeted User Segments
+
+NutriAI serves twelve distinct Nigerian segments, categorized by strategic priority:
+
+- **Primary Segments (60 million):** Menstrual cycle users (25M) needing hormonal guidance; students/budget users (20M) requiring affordable, calorie-dense planning; and general wellness users (15M).
+- **Secondary Segments (38 million):** Users actively managing hypertension (12M), PCOS (8M), weight loss (8M), diabetes (5M), and seniors needing cardiovascular support (5M).
+- **Tertiary Segments (10 million):** Pregnant women (4M), postpartum/lactating mothers (3M), athletes prioritizing local protein (2M), and low-impact fitness users (1M).
+
+## Core AI Features
+
+The platform's technological foundation relies on eight deeply integrated features:
+
+**1\. Snap and Scan - Nigerian Dish Recognition**
+
+Users photograph any local dish, and the AI immediately identifies it, logging its full nutritional profile (macros, micros, sodium, glycemic index). The model accounts for real-world variations, distinguishing between a rich Buka serving and a lighter home-cooked meal, instantly solving the biggest friction point in nutrition tracking.
+
+**2\. Clinical Calorie and Nutrient Tracker**
+
+A full-day interface tracking macros and clinically significant micronutrients (sodium, iron, calcium, folate). Pre-populated with local defaults, it eliminates the database friction found in Western apps.
+
+**3\. AI Meal Planning and Recommendation Engine**
+
+Automatically generates culturally relevant plans-accommodating breakfast pap and midday swallows-based on health profiles, budgets, and cycle phases. The engine intuitively learns, dropping consistently rejected foods and highlighting favorites.
+
+**4\. Cycle & Pregnancy Synced Nutrition**
+
+This feature categorizes the menstrual cycle into four phases to support physiological shifts:
+
+- **Menstrual (Days 1-5):** Prioritizes iron-rich foods (_ugu_ soup, _suya_) and anti-inflammatory _zobo_ to combat blood loss and cramping.
+- **Follicular (Days 6-14):** Leverages rising energy with lighter, nutrient-dense meals like _moi moi_ and fresh soups.
+- **Ovulation (Day 14):** Supports peak estrogen with antioxidant-rich foods like smoked _titus_ fish.
+- **Luteal (Days 15-28):** Combats PMS with magnesium-rich plantains and mood-supporting groundnut soup. _(A specialized protocol adapts this for PCOS users, focusing on insulin sensitivity)._
+
+**Pregnancy:** Trimester-specific planning that maximizes vital nutrients (folate, calcium) while flagging local foods that impact pregnancy negatively.
+
+**5\. Disease-Specific Clinical Protocols**
+
+Dietitian-developed protocols manage conditions without culturally alienating users:
+
+- **Hypertension:** Adapts the DASH diet by reducing sodium in local soups and prioritizing high-potassium beans.
+- **Type 2 Diabetes:** Manages glycemic loads by controlling portion sizes and fiber pairings of staples like _eba_, rather than banning them entirely.
+- **Obesity Management:** Focuses on sustainable, highly satiating caloric deficits using high-fiber Nigerian foods, avoiding crash diets.
+
+**6\. Smart Substitutes Engine**
+
+When a recommended food is unavailable or too expensive, the engine offers a clinically and financially equivalent alternative (e.g., a low-sodium substitute for a hypertensive user).
+
+**7\. Family and Household Planner**
+
+Produces a single, consolidated meal plan and shopping list for families of up to twelve. It seamlessly combines overlapping meal components to meet varying household health conditions (e.g., a hypertensive father and postpartum mother) while reducing cooking complexity.
+
+**8\. Hydration Tracker**
+
+Personalizes water intake based on body weight, climate, and activity, intelligently accounting for the high water content in traditional Nigerian soups.
+
+## Core Infrastructure: Food and Budget Intelligence
+
+**The Nigerian Food Intelligence Database**
+
+Treated as a primary infrastructure investment, this locally validated database contains over 2,000 entries. It features comprehensive macro/micronutrient profiles, glycemic loads, and regional availability. Crucially, it tracks preparation variants, recognizing that a food's profile changes depending on whether it is boiled, fried, smoked, or fermented.
+
+**Budget Intelligence as a Clinical Input**
+
+NutriAI treats financial reality as a vital clinical metric. Generated plans are costed in real-time using National Bureau of Statistics data. A medical student with ₦15,000 and a professional with ₦80,000 both receive clinically sound plans; the engine simply scales the portion size and selection of premium ingredients to fit their budgets.
+
+## OPay Integration Architecture
+
+NutriAI's integration with OPay creates the financial layer necessary to make nutrition planning executable:
+
+- **Friction-Free Payments:** Payments are processed seamlessly via your OPay account or by simply adding an OPay card, eliminating the friction that historically hinders subscription conversion for health applications in Nigeria.
+
+## NutriRewards: A Financially Sustainable Engine
+
+Traditional tech reward models burn capital unsustainably. NutriAI's redesigned architecture operates on three closed-loop mechanisms, ensuring the platform never pays from reserves it does not possess:
+
+- **In-App Rewards (Free Users):** Users earn points for logging meals, redeemable _exclusively_ for in-app benefits like temporary premium access. This drives acquisition at zero cash cost.
+- **Premium-Funded Monetary Rewards:** Subscribers earn monetary OPay credits, funded directly by ring-fencing 15% of their _own_ monthly subscription fee. This provides a structured engagement incentive with zero financial risk to the platform.
+- **FMCG Brand Partnerships Pool:** Brands pay to feature contextually appropriate product recommendations. A portion of this revenue funds a community rewards pool.
+
+## Business Model
+
+NutriAI will generate revenue through four high-margin streams:
+
+- **Freemium Subscriptions:** A free tracking tier and a premium tier (₦1,500 - ₦2,500/month) unlocking full clinical and family protocols.
+- **FMCG Brand Partnerships:** Revenue from clinically justified product recommendations, which carry immense purchase influence.
+- **Institutional Licensing:** Annual per-seat B2B licenses to health insurers, HMOs, and corporate wellness programs.
+- **Clinical Data Products:** Licensing anonymized, aggregated dietary behavioral data to public health and pharmaceutical researchers.
+
+## Expected Impact and OPay Alignment
+
+Within its first year, NutriAI targets 250,000 active users, 20,000 premium subscribers, and measurable clinical improvements, such as reduced sodium intake and better glycemic control.
+
+NutriAI advances OPay's mission of financial empowerment into the home-recognizing that choosing what to cook is simultaneously a health and financial decision. The platform drives consistent wallet transactions, deepens engagement among highly desirable demographics, and positions OPay as an indispensable infrastructure partner in Nigerian healthcare.
+
+## Conclusion
+
+The true opportunity in Nigerian nutrition is not telling people what to eat, but building a system that takes their bodies, culture, budgets, and hormones seriously. A woman managing PCOS in Ibadan deserves a tool that knows what _dawadawa_ does to estrogen, not just kale.
+
+With 100 million fundamentally underserved users and OPay's infrastructure already in place, the market is waiting for a simple answer to a vital question: _Does this work for me?_
+
+NutriAI answers yes-and means it.
+
+**NutriAI - Built for Nigerian Bodies. Priced for Nigerian Budgets. Powered by OPay.**

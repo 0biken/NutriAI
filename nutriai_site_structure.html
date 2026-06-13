@@ -1,0 +1,155 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{padding:1rem 0;font-family:var(--font-sans)}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--color-text-secondary);margin:2rem 0 .75rem}
+.section-label:first-child{margin-top:0}
+.flow{display:flex;flex-direction:column;gap:6px}
+.sec{display:grid;grid-template-columns:28px 1fr auto;gap:0 14px;align-items:start;padding:12px 14px;border-radius:10px;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.sec-num{font-size:11px;font-weight:500;color:var(--color-text-secondary);padding-top:2px}
+.sec-body{}
+.sec-name{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.sec-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.55}
+.sec-tag{font-size:10px;font-weight:500;padding:3px 9px;border-radius:99px;white-space:nowrap;align-self:center}
+.t-hero{background:#0D1F0F;color:#A8E063}
+.t-scroll{background:#EAF3DE;color:#27500A}
+.t-static{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.t-cta{background:#FAEEDA;color:#633806}
+.connector{width:1px;height:10px;background:var(--color-border-secondary);margin-left:27px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem}
+.leg{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--color-text-secondary)}
+.leg-dot{width:8px;height:8px;border-radius:99px}
+</style>
+
+<div class="wrap">
+<div class="section-label">Page sections — scroll order</div>
+<div class="flow">
+
+  <div class="sec">
+    <div class="sec-num">01</div>
+    <div class="sec-body">
+      <div class="sec-name">Nav</div>
+      <div class="sec-desc">Logo · 3 ghost links (How it works, For you, Pricing) · "Join waitlist" CTA pill — sticky, transparent-to-filled on scroll</div>
+    </div>
+    <span class="sec-tag t-static">Static</span>
+  </div>
+  <div class="connector"></div>
+
+  <div class="sec">
+    <div class="sec-num">02</div>
+    <div class="sec-body">
+      <div class="sec-name">Hero</div>
+      <div class="sec-desc">Dark full-viewport. Display headline + one-line sub. Phone mockup anchored right. Single CTA. Subtle animated food-name ticker scrolling behind headline.</div>
+    </div>
+    <span class="sec-tag t-hero">Dark hero</span>
+  </div>
+  <div class="connector"></div>
+
+  <div class="sec">
+    <div class="sec-num">03</div>
+    <div class="sec-body">
+      <div class="sec-name">Problem bar</div>
+      <div class="sec-desc">3-stat strip on warm white — "38% of Nigerians have hypertension", "&lt;50 Nigerian foods in MyFitnessPal", "67% of pregnant women: anemia". Numbers count up on entry.</div>
+    </div>
+    <span class="sec-tag t-static">Static strip</span>
+  </div>
+  <div class="connector"></div>
+
+  <div class="sec">
+    <div class="sec-num">04</div>
+    <div class="sec-body">
+      <div class="sec-name">Feature 1 — Snap &amp; Scan</div>
+      <div class="sec-desc">Scroll-pinned. Phone stays fixed. Camera shutter animation → dish identified → macros populate. Headline fades in left. This is the demo moment.</div>
+    </div>
+    <span class="sec-tag t-scroll">Scroll-pinned</span>
+  </div>
+  <div class="connector"></div>
+
+  <div class="sec">
+    <div class="sec-num">05</div>
+    <div class="sec-body">
+      <div class="sec-name">Feature 2 — Cycle sync</div>
+      <div class="sec-desc">Scroll-pinned. Same phone, screen transitions to cycle calendar. 4-phase pill tabs animate across. Copy changes per phase as user scrolls.</div>
+    </div>
+    <span class="sec-tag t-scroll">Scroll-pinned</span>
+  </div>
+  <div class="connector"></div>
+
+  <div class="sec">
+    <div class="sec-num">06</div>
+    <div class="sec-body">
+      <div class="sec-name">Feature 3 — Budget intelligence</div>
+      <div class="sec-desc">Scroll-pinned. Phone shows meal plan with ₦ cost-per-day. Budget slider animates, plan adapts. "₦15,000/month. Still eating well."</div>
+    </div>
+    <span class="sec-tag t-scroll">Scroll-pinned</span>
+  </div>
+  <div class="connector"></div>
+
+  <div class="sec">
+    <div class="sec-num">07</div>
+    <div class="sec-body">
+      <div class="sec-name">Who it's for</div>
+      <div class="sec-desc">Warm white section. Horizontal scroll of persona cards — Student, PCOS, Pregnant, Diabetic, Athlete. Each card: avatar, primary need, one key NutriAI adaptation.</div>
+    </div>
+    <span class="sec-tag t-static">Static</span>
+  </div>
+  <div class="connector"></div>
+
+  <div class="sec">
+    <div class="sec-num">08</div>
+    <div class="sec-body">
+      <div class="sec-name">Food database flex</div>
+      <div class="sec-desc">Dark background. "2,000+ Nigerian foods. Zero approximations." Animated food name cloud or grid. Egusi, Banga, Ofada, Moi moi, Suya… fading in.</div>
+    </div>
+    <span class="sec-tag t-hero">Dark</span>
+  </div>
+  <div class="connector"></div>
+
+  <div class="sec">
+    <div class="sec-num">09</div>
+    <div class="sec-body">
+      <div class="sec-name">Clinical credibility</div>
+      <div class="sec-desc">Partner logos row (SOGON, Diabetes Assoc. of Nigeria, etc.) + one pull-quote from a dietitian. Keeps trust high without feeling medical.</div>
+    </div>
+    <span class="sec-tag t-static">Static</span>
+  </div>
+  <div class="connector"></div>
+
+  <div class="sec">
+    <div class="sec-num">10</div>
+    <div class="sec-body">
+      <div class="sec-name">Pricing</div>
+      <div class="sec-desc">Two cards — Free and Premium (₦1,500–₦2,500/month). OPay badge on premium. NutriRewards callout below cards.</div>
+    </div>
+    <span class="sec-tag t-static">Static</span>
+  </div>
+  <div class="connector"></div>
+
+  <div class="sec">
+    <div class="sec-num">11</div>
+    <div class="sec-body">
+      <div class="sec-name">Final CTA</div>
+      <div class="sec-desc">Full-width dark section. Big headline: "Your body deserves better than a kale salad." Email waitlist capture. OPay-powered badge.</div>
+    </div>
+    <span class="sec-tag t-cta">Conversion</span>
+  </div>
+  <div class="connector"></div>
+
+  <div class="sec">
+    <div class="sec-num">12</div>
+    <div class="sec-body">
+      <div class="sec-name">Footer</div>
+      <div class="sec-desc">Logo · tagline · links · "Built for Nigerian bodies" line · OPay partner mark.</div>
+    </div>
+    <span class="sec-tag t-static">Static</span>
+  </div>
+
+</div>
+
+<div class="legend">
+  <div class="leg"><div class="leg-dot" style="background:#0D1F0F"></div>Dark hero section</div>
+  <div class="leg"><div class="leg-dot" style="background:#3B6D11"></div>Scroll-pinned (alma pattern)</div>
+  <div class="leg"><div class="leg-dot" style="background:#888780"></div>Static section</div>
+  <div class="leg"><div class="leg-dot" style="background:#BA7517"></div>Conversion CTA</div>
+</div>
+</div>
