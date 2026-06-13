@@ -3,10 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { Camera, Upload, AlertCircle, CheckCircle2, Flame, Beef, Wheat, Droplet, Sparkles, RotateCcw, ImagePlus } from "lucide-react";
+import { Camera, AlertCircle, CheckCircle2, Flame, Beef, Wheat, Droplet, Sparkles, RotateCcw, ImagePlus } from "lucide-react";
 import { fileToBase64 } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { RateLimitBanner } from "@/components/ui/rate-limit-banner";
 import { getProfile, getMealLogForDate, saveMealLog } from "@/lib/storage";
 import { UserProfile, MealLog, SnapScanResult } from "@/lib/types";
 
@@ -24,6 +25,23 @@ export default function TrackerPage() {
   const [scanResult, setScanResult] = useState<SnapScanResult | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Rate-limit / auto-retry state
+  const [retryAt, setRetryAt] = useState<number | null>(null);
+  const [, setTick] = useState(0);
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const secondsLeft = retryAt ? Math.max(0, Math.ceil((retryAt - Date.now()) / 1000)) : 0;
+  const isRateLimited = retryAt !== null && secondsLeft > 0;
+
+  useEffect(() => {
+    if (retryAt === null) return;
+    const t = setInterval(() => setTick((n) => n + 1), 250);
+    return () => clearInterval(t);
+  }, [retryAt]);
+
+  useEffect(() => () => {
+    if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
+  }, []);
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) { router.push("/sign-in"); return; }
@@ -52,6 +70,11 @@ export default function TrackerPage() {
 
   const handleScan = async () => {
     if (!imageFile || !profile) return;
+    if (retryTimerRef.current) {
+      clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
+    setRetryAt(null);
     setScanning(true);
 
     try {
@@ -63,7 +86,22 @@ export default function TrackerPage() {
         body: JSON.stringify({ imageBase64: base64Str }),
       });
 
-      if (!res.ok) throw new Error("API failed");
+      if (res.status === 429) {
+        const errBody = await res.json().catch(() => null);
+        const sec = Math.max(1, Number(errBody?.retryAfterSec) || 30);
+        setRetryAt(Date.now() + sec * 1000);
+        setScanning(false);
+        retryTimerRef.current = setTimeout(() => {
+          retryTimerRef.current = null;
+          handleScan();
+        }, sec * 1000);
+        return;
+      }
+
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => null);
+        throw new Error(errBody?.details || "API failed");
+      }
       const data = await res.json();
 
       const result: SnapScanResult = {
@@ -102,7 +140,7 @@ export default function TrackerPage() {
       setDailyLog(currentLog);
     } catch (err) {
       console.error(err);
-      alert("Failed to scan image. Please try again.");
+      alert(err instanceof Error ? err.message : "Failed to scan image. Please try again.");
     } finally {
       setScanning(false);
     }
@@ -135,6 +173,10 @@ export default function TrackerPage() {
       {/* ── Body ────────────────────────────────────────────────── */}
       <section className="bg-warm-white">
         <div className="max-w-2xl mx-auto px-5 -mt-6 pb-28">
+          {isRateLimited && (
+            <RateLimitBanner secondsLeft={secondsLeft} className="mb-4" />
+          )}
+
           {/* ── Capture card ───────────────────────────────────── */}
           <div className="bg-white border border-forest/10 rounded-3xl shadow-sm p-4 mb-5 overflow-hidden">
             {imagePreview ? (
@@ -189,15 +231,15 @@ export default function TrackerPage() {
                 </Button>
               )}
               {imagePreview && !scanResult ? (
-                <Button className="flex-1" onClick={handleScan} disabled={scanning}>
-                  <Sparkles className="w-4 h-4" /> Scan meal
+                <Button className="flex-1" onClick={handleScan} disabled={scanning || isRateLimited}>
+                  <Sparkles className="w-4 h-4" /> {isRateLimited ? `Cooling down · ${secondsLeft}s` : "Scan meal"}
                 </Button>
               ) : !imagePreview ? (
-                <Button className="w-full" variant="secondary" onClick={() => fileInputRef.current?.click()}>
+                <Button className="w-full" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isRateLimited}>
                   <ImagePlus className="w-4 h-4" /> Upload from gallery
                 </Button>
               ) : (
-                <Button className="flex-1" onClick={reset}>
+                <Button className="flex-1" onClick={reset} disabled={isRateLimited}>
                   <Camera className="w-4 h-4" /> Scan another
                 </Button>
               )}

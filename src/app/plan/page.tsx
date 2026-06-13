@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { getProfile, saveMealPlan, getLatestMealPlan } from "@/lib/storage";
 import { UserProfile, MealPlan } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { RateLimitBanner } from "@/components/ui/rate-limit-banner";
 import { Sparkles, CalendarDays, CheckCircle2, ChevronDown, RefreshCw, Coins, Heart } from "lucide-react";
 
 const LOADING_LINES = [
@@ -28,6 +29,13 @@ export default function PlanPage() {
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [expandedDay, setExpandedDay] = useState<number>(0);
+
+  // Rate-limit / auto-retry state
+  const [retryAt, setRetryAt] = useState<number | null>(null);
+  const [, setTick] = useState(0);
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const secondsLeft = retryAt ? Math.max(0, Math.ceil((retryAt - Date.now()) / 1000)) : 0;
+  const isRateLimited = retryAt !== null && secondsLeft > 0;
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -57,8 +65,25 @@ export default function PlanPage() {
     }
   }, [loading]);
 
+  // Re-render every 250ms while in cooldown so the countdown updates
+  useEffect(() => {
+    if (retryAt === null) return;
+    const t = setInterval(() => setTick((n) => n + 1), 250);
+    return () => clearInterval(t);
+  }, [retryAt]);
+
+  // Clear any pending auto-retry timer on unmount
+  useEffect(() => () => {
+    if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
+  }, []);
+
   const generatePlan = async () => {
     if (!profile) return;
+    if (retryTimerRef.current) {
+      clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
+    setRetryAt(null);
     setLoading(true);
     setLoadingStep(0);
 
@@ -72,7 +97,22 @@ export default function PlanPage() {
         body: JSON.stringify({ profile, cyclePhase }),
       });
 
-      if (!res.ok) throw new Error("Failed to generate plan");
+      if (res.status === 429) {
+        const errBody = await res.json().catch(() => null);
+        const sec = Math.max(1, Number(errBody?.retryAfterSec) || 30);
+        setRetryAt(Date.now() + sec * 1000);
+        setLoading(false);
+        retryTimerRef.current = setTimeout(() => {
+          retryTimerRef.current = null;
+          generatePlan();
+        }, sec * 1000);
+        return;
+      }
+
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => null);
+        throw new Error(errBody?.details || "Failed to generate plan");
+      }
 
       const planData = await res.json();
 
@@ -95,10 +135,10 @@ export default function PlanPage() {
 
       saveMealPlan(newPlan);
       setMealPlan(newPlan);
+      setLoading(false);
     } catch (err) {
       console.error(err);
-      alert("Error generating meal plan. Please try again.");
-    } finally {
+      alert(err instanceof Error ? err.message : "Error generating meal plan. Please try again.");
       setLoading(false);
     }
   };
@@ -117,9 +157,9 @@ export default function PlanPage() {
           </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-2">
-            <Button onClick={generatePlan} disabled={loading} size="lg">
+            <Button onClick={generatePlan} disabled={loading || isRateLimited} size="lg">
               {mealPlan ? <RefreshCw className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
-              {mealPlan ? "Regenerate" : "Generate plan"}
+              {isRateLimited ? `Cooling down · ${secondsLeft}s` : mealPlan ? "Regenerate" : "Generate plan"}
             </Button>
             <Badge variant="dark">
               <Coins className="w-3 h-3" />
@@ -138,6 +178,10 @@ export default function PlanPage() {
       {/* ── Body ────────────────────────────────────────────────── */}
       <section className="bg-warm-white">
         <div className="max-w-4xl mx-auto px-5 pt-8 pb-24">
+          {isRateLimited && !loading && (
+            <RateLimitBanner secondsLeft={secondsLeft} className="mb-5" />
+          )}
+
           {loading && (
             <div className="bg-white border border-forest/10 rounded-3xl p-10 shadow-sm flex flex-col items-center text-center">
               <div className="relative w-14 h-14 mb-6">

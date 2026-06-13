@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Send, Sparkles, Languages, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { RateLimitBanner } from "@/components/ui/rate-limit-banner";
 import { getProfile, getChatSession, saveChatSession } from "@/lib/storage";
 import { UserProfile, ChatSession, ChatMessage } from "@/lib/types";
 
@@ -34,6 +35,23 @@ export default function ChatPage() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Rate-limit / auto-retry state
+  const [retryAt, setRetryAt] = useState<number | null>(null);
+  const [, setTick] = useState(0);
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const secondsLeft = retryAt ? Math.max(0, Math.ceil((retryAt - Date.now()) / 1000)) : 0;
+  const isRateLimited = retryAt !== null && secondsLeft > 0;
+
+  useEffect(() => {
+    if (retryAt === null) return;
+    const t = setInterval(() => setTick((n) => n + 1), 250);
+    return () => clearInterval(t);
+  }, [retryAt]);
+
+  useEffect(() => () => {
+    if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
+  }, []);
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) return;
@@ -88,7 +106,12 @@ export default function ChatPage() {
 
   const sendMessage = async (raw: string) => {
     const trimmed = raw.trim();
-    if (!trimmed || !session || !profile || streaming) return;
+    if (!trimmed || !session || !profile || streaming || isRateLimited) return;
+    if (retryTimerRef.current) {
+      clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
+    setRetryAt(null);
 
     const userMsg: ChatMessage = {
       id: "msg-" + Date.now(),
@@ -125,7 +148,24 @@ export default function ChatPage() {
         body: JSON.stringify({ messages: newMessages, profile, cyclePhase }),
       });
 
-      if (!res.ok || !res.body) throw new Error("Chat API failed");
+      if (res.status === 429) {
+        const errBody = await res.json().catch(() => null);
+        const sec = Math.max(1, Number(errBody?.retryAfterSec) || 30);
+        // Roll back the optimistic user + empty-assistant messages so we can resend cleanly
+        setSession((prev) => prev ? { ...prev, messages: prev.messages.slice(0, -2) } : prev);
+        setRetryAt(Date.now() + sec * 1000);
+        setStreaming(false);
+        retryTimerRef.current = setTimeout(() => {
+          retryTimerRef.current = null;
+          sendMessage(trimmed);
+        }, sec * 1000);
+        return;
+      }
+
+      if (!res.ok || !res.body) {
+        const errBody = await res.json().catch(() => null);
+        throw new Error(errBody?.details || "Chat API failed");
+      }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder("utf-8");
@@ -150,7 +190,7 @@ export default function ChatPage() {
       });
     } catch (err) {
       console.error(err);
-      alert("Error communicating with AI.");
+      alert(err instanceof Error ? err.message : "Error communicating with AI.");
     } finally {
       setStreaming(false);
     }
@@ -247,6 +287,9 @@ export default function ChatPage() {
 
       {/* ── Composer ────────────────────────────────────────────── */}
       <div className="shrink-0 bg-white border-t border-forest/10 px-3 pt-3 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
+        {isRateLimited && (
+          <RateLimitBanner secondsLeft={secondsLeft} className="mb-3" />
+        )}
         <div className="flex items-end gap-2">
           <div className="flex-1 relative">
             <textarea
@@ -254,16 +297,16 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask in English, Pidgin, Yoruba, Igbo or Hausa…"
+              placeholder={isRateLimited ? `Waiting · retrying in ${secondsLeft}s…` : "Ask in English, Pidgin, Yoruba, Igbo or Hausa…"}
               rows={1}
-              disabled={streaming}
+              disabled={streaming || isRateLimited}
               className="w-full resize-none rounded-2xl border border-forest/15 bg-white px-4 py-3 text-sm leading-snug text-forest placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-vitality focus:border-vitality transition-brand disabled:opacity-60"
             />
           </div>
           <button
             type="button"
             onClick={() => sendMessage(input)}
-            disabled={!input.trim() || streaming}
+            disabled={!input.trim() || streaming || isRateLimited}
             aria-label="Send"
             className="h-11 w-11 rounded-full grid place-items-center bg-vitality text-forest shadow-sm hover:bg-vitality-d transition-brand disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vitality focus-visible:ring-offset-2 focus-visible:ring-offset-white shrink-0"
           >
