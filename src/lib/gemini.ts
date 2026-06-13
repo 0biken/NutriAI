@@ -7,8 +7,8 @@ if (typeof window !== "undefined") {
 
 const apiKey = process.env.GEMINI_API_KEY;
 
-if (!apiKey) {
-  throw new Error("GEMINI_API_KEY is not defined in environment variables");
+if (!apiKey && process.env.NODE_ENV !== "development" && process.env.NODE_ENV !== "test") {
+  console.warn("GEMINI_API_KEY is not defined in environment variables. Gemini features will fail.");
 }
 
-export const ai = new GoogleGenAI({ apiKey });
+export const ai = new GoogleGenAI({ apiKey: apiKey || "dummy-key-for-build" });

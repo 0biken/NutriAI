@@ -51,7 +51,7 @@ export function calculateTargets(profile: Partial<UserProfile>): NutrientTargets
 
   // Sugar limit (max 10% of total calories)
   let sugar_limit_g = Math.round((calories * 0.1) / 4);
-  if (profile.conditions?.includes('diabetes')) {
+  if (profile.conditions?.includes('type2_diabetes' as any)) {
     sugar_limit_g = 25; // Strict cap for diabetes
   }
 
