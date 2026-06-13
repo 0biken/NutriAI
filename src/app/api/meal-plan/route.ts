@@ -50,7 +50,7 @@ OUTPUT SCHEMA:
         "dinner": { ... },
         "snack": { ... }
       },
-      "daily_totals": { "calories": number, "protein_g": number, "carbs_g": number, "fat_g": number, "sodium_mg": number, "iron_mg": number, "folate_mcg": number, "calcium_mg": number, "potassium_mg": number, "magnesium_mg": number, "fiber_g": number, "cost_ngn": number },
+      "daily_totals": { "calories": number, "protein_g": number, "carbs_g": number, "fats_g": number, "sodium_mg": number, "iron_mg": number, "folate_mcg": number, "calcium_mg": number, "potassium_mg": number, "magnesium_mg": number, "fiber_g": number, "cost_ngn": number },
       "target_adherence": { "calories_pct": number, "protein_pct": number, "sodium_pct": number }
     }
   ],

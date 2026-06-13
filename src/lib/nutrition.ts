@@ -60,7 +60,7 @@ export function calculateTargets(profile: Partial<UserProfile>): NutrientTargets
     protein_g: protein,
     carbs_g: carbs,
     fats_g: fats,
-    sodium_limit_mg,
-    sugar_limit_g
+    sodium_mg: sodium_limit_mg,
+    sugar_g: sugar_limit_g
   };
 }

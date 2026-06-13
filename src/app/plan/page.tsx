@@ -56,8 +56,8 @@ export default function PlanPage() {
     setLoadingStep(0);
 
     try {
-      const cyclePhase = profile.gender === 'female' && profile.cycle_data 
-        ? profile.cycle_data.current_phase 
+      const cyclePhase = profile.gender === 'female' && profile.cycle 
+        ? profile.cycle.current_phase 
         : null;
 
       const res = await fetch("/api/meal-plan", {
@@ -70,13 +70,21 @@ export default function PlanPage() {
       
       const planData = await res.json();
       
-      // Save full plan with ID and metadata
       const newPlan: MealPlan = {
         id: "plan-" + Date.now(),
-        start_date: new Date().toISOString().split('T')[0],
-        end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        user_id: profile.id,
+        generated_at: new Date().toISOString(),
+        week_start: new Date().toISOString().split('T')[0],
+        context: {
+          cycle_phase: cyclePhase as any,
+          budget_ngn: profile.monthly_budget_ngn,
+          active_conditions: profile.conditions,
+          goal: profile.goal
+        },
         days: planData.days,
-        weekly_totals: planData.weekly_totals
+        weekly_totals: planData.weekly_totals,
+        plan_summary: planData.plan_summary || "Your customized meal plan.",
+        clinical_notes: planData.clinical_notes || ""
       };
 
       saveMealPlan(newPlan);
@@ -115,7 +123,7 @@ export default function PlanPage() {
           <h3 className="text-xl font-semibold text-forest mb-2 animate-pulse">
             {LOADING_MESSAGES[loadingStep]}
           </h3>
-          <p className="text-muted text-sm">Our AI is crunching the numbers to keep you under {profile.daily_targets.sodium_limit_mg}mg of sodium.</p>
+          <p className="text-muted text-sm">Our AI is crunching the numbers to keep you under {profile.daily_targets.sodium_mg}mg of sodium.</p>
         </div>
       )}
 

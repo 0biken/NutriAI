@@ -91,8 +91,8 @@ export default function ChatPage() {
     setStreaming(true);
 
     try {
-      const cyclePhase = profile.gender === 'female' && profile.cycle_data 
-        ? profile.cycle_data.current_phase 
+      const cyclePhase = profile.gender === 'female' && profile.cycle 
+        ? profile.cycle.current_phase 
         : null;
 
       const res = await fetch("/api/chat", {
@@ -168,18 +168,14 @@ export default function ChatPage() {
         {session.messages.map((msg) => {
           const isUser = msg.role === "user";
           return (
-            <div key={msg.id} className={\`flex \${isUser ? "justify-end" : "justify-start"} gap-2\`}>
+            <div key={msg.id} className={isUser ? "flex justify-end gap-2" : "flex justify-start gap-2"}>
               {!isUser && (
                 <div className="w-8 h-8 rounded-full bg-forest/10 flex items-center justify-center shrink-0">
                   <Bot className="w-4 h-4 text-forest" />
                 </div>
               )}
               
-              <div className={\`px-4 py-2 rounded-2xl max-w-[80%] \${
-                isUser 
-                  ? "bg-forest text-warm-white rounded-br-sm" 
-                  : "bg-white border border-forest/10 text-forest rounded-bl-sm shadow-sm"
-              }\`}>
+              <div className={"px-4 py-2 rounded-2xl max-w-[80%] " + (isUser ? "bg-forest text-warm-white rounded-br-sm" : "bg-white border border-forest/10 text-forest rounded-bl-sm shadow-sm")}>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                 {streaming && msg.content === "" && !isUser && (
                   <div className="flex gap-1 items-center h-4">

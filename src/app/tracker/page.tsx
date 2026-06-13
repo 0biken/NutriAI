@@ -85,8 +85,8 @@ export default function TrackerPage() {
         user_id: profile.id,
         date: today,
         entries: [],
-        daily_totals: { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, sodium_mg: 0, iron_mg: 0, folate_mcg: 0, calcium_mg: 0, potassium_mg: 0, magnesium_mg: 0, fiber_g: 0, cost_ngn: 0 },
-        target_adherence: { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, sodium_mg: 0, iron_mg: 0, folate_mcg: 0, calcium_mg: 0, potassium_mg: 0, magnesium_mg: 0, fiber_g: 0, cost_ngn: 0 },
+        daily_totals: { calories: 0, protein_g: 0, carbs_g: 0, fats_g: 0, sodium_mg: 0, sugar_g: 0, cost_ngn: 0 } as any,
+        target_adherence: { calories: 0, protein_g: 0, carbs_g: 0, fats_g: 0, sodium_mg: 0, sugar_g: 0, fiber_g: 0 } as any,
         scanned_meals: []
       };
 
@@ -200,7 +200,7 @@ export default function TrackerPage() {
             </div>
             <div className="bg-warm-white p-2 rounded-lg text-center">
               <p className="text-[10px] text-muted uppercase">Fat</p>
-              <p className="font-bold text-forest">{scanResult.total_nutrients.fat_g}g</p>
+              <p className="font-bold text-forest">{scanResult.total_nutrients.fats_g}g</p>
             </div>
           </div>
 

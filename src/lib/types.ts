@@ -45,82 +45,30 @@ export interface NutrientTargets {
   calories: number;
   protein_g: number;
   carbs_g: number;
-  fat_g: number;
+  fats_g: number;
 
   // Clinically significant micros — tracked for conditions
   sodium_mg: number;       // critical for hypertension (target: <1500mg DASH)
-  iron_mg: number;         // critical for menstrual / pregnancy
-  folate_mcg: number;      // critical for pregnancy
-  calcium_mg: number;
-  potassium_mg: number;    // hypertension support
-  magnesium_mg: number;    // PCOS / luteal phase
-  fiber_g: number;         // diabetes glycemic control
+  sugar_g: number;
+  fiber_g?: number;         // diabetes glycemic control
+  iron_mg?: number;         // critical for menstrual / pregnancy
+  folate_mcg?: number;      // critical for pregnancy
+  calcium_mg?: number;
+  potassium_mg?: number;    // hypertension support
+  magnesium_mg?: number;    // PCOS / luteal phase
 }
 
 export interface FoodItem {
   id: string;                          // e.g. 'egusi_soup'
   name: string;                        // 'Egusi soup'
-  local_names?: string[];              // ['Ofe Egusi', 'Miyan Gushi']
-  category: FoodCategory;
-  region_tags: Array<'nationwide' | 'southwest' | 'southeast' | 'north' | 'southsouth'>;
-
-  // Macros per 100g (raw/base state)
-  per_100g: {
-    calories: number;
-    protein_g: number;
-    carbs_g: number;
-    fat_g: number;
-    fiber_g: number;
-  };
-
-  // Clinically significant micros per 100g
-  micros_per_100g: {
-    sodium_mg: number;
-    iron_mg: number;
-    folate_mcg: number;
-    calcium_mg: number;
-    potassium_mg: number;
-    magnesium_mg: number;
-  };
-
-  glycemic_index: number;              // 0–100
-  glycemic_load: number;              // accounts for typical serving
-
-  // Preparation variants that meaningfully change nutrition
-  preparation_variants?: {
-    method: 'boiled' | 'fried' | 'smoked' | 'grilled' | 'fermented' | 'raw';
-    calorie_multiplier: number;        // e.g. fried plantain = 1.4x boiled
-    sodium_delta_mg?: number;          // added salt in processing
-  }[];
-
-  // Typical serving sizes
-  serving_sizes: {
-    label: string;                     // e.g. 'medium bowl', '1 wrap', '1 skewer'
-    grams: number;
-  }[];
-
-  // Market price estimate
-  price_per_serving_ngn: {
-    min: number;
-    max: number;
-    market_type: 'buka' | 'market' | 'supermarket';
-  }[];
-
-  // Clinical tags
-  clinical_flags: {
-    high_sodium: boolean;              // flag for hypertension protocol
-    high_gi: boolean;                  // flag for diabetes protocol
-    iron_rich: boolean;                // flag for menstrual / pregnancy
-    folate_rich: boolean;
-    high_fiber: boolean;
-    anti_inflammatory: boolean;
-    magnesium_rich: boolean;
-  };
-
-  // Cycle recommendations
-  cycle_phases?: Array<'menstrual' | 'follicular' | 'ovulation' | 'luteal'>;
-
-  image_emoji: string;                 // fallback display: '🍲'
+  serving_size_g: number;
+  calories: number;
+  protein_g: number;
+  carbs_g: number;
+  fats_g: number;
+  fiber_g: number;
+  sodium_mg: number;
+  glycemic_index: number;
 }
 
 export type FoodCategory =

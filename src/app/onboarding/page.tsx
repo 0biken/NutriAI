@@ -47,16 +47,24 @@ export default function Onboarding() {
       weight_kg: profile.weight_kg || 70,
       height_cm: profile.height_cm || 170,
       conditions: profile.conditions || [],
-      goal: profile.goal as "weight_loss" | "maintenance" | "muscle_gain" | "manage_condition" | "pregnancy",
-      activity_level: profile.activity_level as "sedentary" | "lightly_active" | "moderately_active" | "very_active",
+      goal: ((profile.goal as string) === "pregnancy" ? "pregnancy_nutrition" : profile.goal) as "weight_loss" | "muscle_gain" | "maintenance" | "manage_condition" | "pregnancy_nutrition",
+      activity_level: profile.activity_level as any,
       dietary_restrictions: profile.dietary_restrictions || [],
       monthly_budget_ngn: profile.monthly_budget_ngn || 50000,
+      daily_budget_ngn: Math.round((profile.monthly_budget_ngn || 50000) / 30),
+      disliked_foods: [],
+      created_at: new Date().toISOString(),
       daily_targets: targets,
       ...(profile.gender === 'female' && cycle.last_period_start && {
-        cycle_data: {
+        cycle: {
           last_period_start: cycle.last_period_start,
-          average_length_days: cycle.average_length_days || 28,
-          current_phase: "follicular" // Base logic, to be refined later
+          cycle_length_days: (cycle as any).average_length_days || 28,
+          period_length_days: 5,
+          has_pcos: profile.conditions?.includes('pcos') || false,
+          current_phase: "follicular",
+          current_day: 1,
+          days_until_next_period: 28,
+          next_phase_in_days: 7
         }
       })
     };
@@ -68,9 +76,9 @@ export default function Onboarding() {
   const toggleCondition = (c: string) => {
     setProfile(p => ({
       ...p,
-      conditions: p.conditions?.includes(c) 
+      conditions: p.conditions?.includes(c as any) 
         ? p.conditions.filter(x => x !== c)
-        : [...(p.conditions || []), c]
+        : [...(p.conditions || []), c as any]
     }));
   };
 
@@ -106,7 +114,7 @@ export default function Onboarding() {
                 <div className="grid gap-2">
                   <label className="text-sm font-medium">Gender</label>
                   <select className="border rounded-md p-2 bg-white"
-                    value={profile.gender || ""} onChange={e => setProfile({...profile, gender: e.target.value})}>
+                    value={profile.gender || ""} onChange={e => setProfile({...profile, gender: e.target.value as any})}>
                     <option value="">Select...</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -144,7 +152,7 @@ export default function Onboarding() {
                     title={cond.title}
                     description={cond.desc}
                     icon={<AlertCircle className="w-5 h-5" />}
-                    selected={profile.conditions?.includes(cond.id)}
+                    selected={profile.conditions?.includes(cond.id as any)}
                     onClick={() => toggleCondition(cond.id)}
                   />
                 ))}
@@ -169,14 +177,14 @@ export default function Onboarding() {
                     title={g.title}
                     icon={<Target className="w-5 h-5" />}
                     selected={profile.goal === g.id}
-                    onClick={() => setProfile({...profile, goal: g.id})}
+                    onClick={() => setProfile({...profile, goal: g.id as any})}
                   />
                 ))}
               </div>
 
               <label className="text-sm font-medium mt-4">Activity Level</label>
               <select className="border rounded-md p-2 bg-white"
-                value={profile.activity_level || ""} onChange={e => setProfile({...profile, activity_level: e.target.value})}>
+                value={profile.activity_level || ""} onChange={e => setProfile({...profile, activity_level: e.target.value as any})}>
                 <option value="">Select...</option>
                 <option value="sedentary">Sedentary (Little to no exercise)</option>
                 <option value="lightly_active">Lightly Active (1-3 days/week)</option>
@@ -221,7 +229,7 @@ export default function Onboarding() {
              <div className="grid gap-2 mt-4">
                <label className="text-sm font-medium">Average Cycle Length (Days)</label>
                <input type="number" className="border rounded-md p-2" defaultValue={28}
-                 onChange={e => setCycle({...cycle, average_length_days: Number(e.target.value)})} />
+                 onChange={e => setCycle({...cycle, cycle_length_days: Number(e.target.value)})} />
              </div>
            </div>
           )}

@@ -41,7 +41,7 @@ OUTPUT SCHEMA (JSON):
     "calories": number,
     "protein_g": number,
     "carbs_g": number,
-    "fat_g": number,
+    "fats_g": number,
     "fiber_g": number,
     "sodium_mg": number,
     "iron_mg": number,
