@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-forest: #0D1F0F;
+  --color-forest-2: #152918;
+  --color-forest-3: #1E3420;
+  --color-vitality: #A8E063;
+  --color-vitality-d: #7AB83E;
+  --color-warm-white: #F5F0E8;
+  --color-suya: #E8651A;
+  --color-body-text: #2C3A2A;
+  --color-muted: #6B7E67;
+  --color-border: rgba(168,224,99,0.15);
+  
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  @apply bg-warm-white text-body-text font-sans antialiased;
+}
