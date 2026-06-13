@@ -1,20 +1,91 @@
 @import "tailwindcss";
 
 @theme {
+  /* ── Core brand ────────────────────────────────────────────── */
   --color-forest: #0D1F0F;
   --color-forest-2: #152918;
   --color-forest-3: #1E3420;
   --color-vitality: #A8E063;
   --color-vitality-d: #7AB83E;
+  --color-vitality-l: #6DBF5A;
   --color-warm-white: #F5F0E8;
+  --color-warm-white-2: #F0EDE6;
   --color-suya: #E8651A;
   --color-body-text: #2C3A2A;
   --color-muted: #6B7E67;
   --color-border: rgba(168,224,99,0.15);
-  
-  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* ── Clinical condition tags ───────────────────────────────── */
+  --color-pcos-bg: #EAF3DE;
+  --color-pcos-fg: #27500A;
+  --color-luteal-bg: #FAEEDA;
+  --color-luteal-fg: #633806;
+  --color-pregnancy-bg: #E1F5EE;
+  --color-pregnancy-fg: #085041;
+  --color-clinical-bg: #F0E8FA;
+  --color-clinical-fg: #3C1F6B;
+  --color-budget-bg: #FAEEDA;
+  --color-budget-fg: #633806;
+
+  /* ── African heritage palette (Phase 3 textures) ───────────── */
+  --color-adire-indigo: #1B2F6B;
+  --color-adire-light: #D6DCF0;
+  --color-uli-teal: #0D6B5E;
+  --color-uli-light: #D0EDE9;
+  --color-hausa-brick: #8B3A2A;
+  --color-hausa-light: #F5DDD5;
+  --color-kente: #D4A017;
+  --color-kente-light: #FAF0C8;
+
+  /* ── Type ──────────────────────────────────────────────────── */
+  --font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* ── Motion (Uli flow) ─────────────────────────────────────── */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-brand-in: cubic-bezier(0.64, 0, 0.78, 0);
 }
 
 body {
   @apply bg-warm-white text-body-text font-sans antialiased;
+}
+
+/* ── Adire-inspired hero texture (4% opacity on dark) ────────── */
+.bg-adire-grid {
+  background-image:
+    radial-gradient(rgba(168,224,99,0.04) 1px, transparent 1px),
+    radial-gradient(rgba(168,224,99,0.025) 1px, transparent 1px);
+  background-size: 24px 24px, 48px 48px;
+  background-position: 0 0, 12px 12px;
+}
+
+/* ── Brand transition utility ───────────────────────────────── */
+.transition-brand {
+  transition-timing-function: var(--ease-brand);
+  transition-duration: 600ms;
+}
+
+/* ── Brand text utilities ───────────────────────────────────── */
+.text-display {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.text-h1-brand {
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.text-label-brand {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Reduced motion respect ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }

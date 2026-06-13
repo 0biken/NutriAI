@@ -1,22 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import { ClerkProvider, SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
 import { Navigation } from "@/components/Navigation";
+import { Logo } from "@/components/Logo";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "NutriAI",
-  description: "Nigeria's First Clinical Nutrition App",
+  title: "NutriAI — Built for Nigerian Bodies",
+  description: "Nigeria's first clinical nutrition app. Cycle-aware meal plans, photo-based scanning, and a culturally fluent AI nutritionist.",
 };
 
 export default function RootLayout({
@@ -26,18 +23,37 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased pb-16`}>
+      <body className={`${inter.variable} font-sans antialiased pb-20 bg-warm-white`}>
         <ClerkProvider>
-          <header className="p-4 flex justify-end gap-4 border-b border-border bg-forest">
-            <Show when="signed-out">
-              <SignInButton mode="modal" />
-              <SignUpButton mode="modal" />
-            </Show>
-            <Show when="signed-in">
-              <UserButton />
-            </Show>
+          <header className="bg-forest bg-adire-grid border-b border-vitality/10">
+            <div className="max-w-5xl mx-auto px-5 py-3.5 flex items-center justify-between gap-4">
+              <Logo size="sm" theme="dark" withTagline />
+              <div className="flex items-center gap-2">
+                <Show when="signed-out">
+                  <SignInButton mode="modal">
+                    <button className="h-9 px-4 rounded-full text-sm font-medium text-warm-white hover:bg-warm-white/10 transition-brand">
+                      Sign in
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button className="h-9 px-4 rounded-full text-sm font-semibold bg-vitality text-forest hover:bg-vitality-d transition-brand">
+                      Get started
+                    </button>
+                  </SignUpButton>
+                </Show>
+                <Show when="signed-in">
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        avatarBox: "w-9 h-9 ring-2 ring-vitality/30",
+                      },
+                    }}
+                  />
+                </Show>
+              </div>
+            </div>
           </header>
-          {children}
+          <main>{children}</main>
           <Navigation />
         </ClerkProvider>
       </body>
