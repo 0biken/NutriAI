@@ -1,12 +1,13 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { CheckCircle2 } from "lucide-react"
+import { Check } from "lucide-react"
 
-interface SelectCardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface SelectCardProps extends React.HTMLAttributes<HTMLButtonElement> {
   selected?: boolean;
   title: string;
   description?: string;
   icon?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export function SelectCard({
@@ -15,31 +16,54 @@ export function SelectCard({
   title,
   description,
   icon,
+  disabled,
   ...props
 }: SelectCardProps) {
   return (
-    <div
+    <button
+      type="button"
+      aria-pressed={selected}
+      disabled={disabled}
       className={cn(
-        "relative flex cursor-pointer flex-col gap-2 rounded-xl border p-4 transition-all hover:shadow-md",
+        "group relative w-full text-left rounded-2xl border-2 p-4 transition-brand",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vitality focus-visible:ring-offset-2 focus-visible:ring-offset-warm-white",
+        "disabled:opacity-50 disabled:pointer-events-none",
         selected
-          ? "border-forest bg-forest/5"
-          : "border-border bg-white hover:border-forest/50",
+          ? "border-vitality bg-vitality/10 shadow-sm"
+          : "border-forest/10 bg-white hover:border-forest/25 hover:-translate-y-0.5",
         className
       )}
-      {...props}
+      {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          {icon && <div className="text-forest">{icon}</div>}
-          <h3 className="font-semibold text-forest">{title}</h3>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3 min-w-0">
+          {icon && (
+            <div
+              className={cn(
+                "shrink-0 grid place-items-center w-9 h-9 rounded-xl transition-brand",
+                selected ? "bg-vitality text-forest" : "bg-forest/5 text-forest group-hover:bg-forest/10"
+              )}
+            >
+              {icon}
+            </div>
+          )}
+          <div className="min-w-0">
+            <h3 className="font-semibold text-forest leading-tight">{title}</h3>
+            {description && (
+              <p className="text-sm text-muted mt-1 leading-snug">{description}</p>
+            )}
+          </div>
         </div>
-        {selected && (
-          <CheckCircle2 className="h-5 w-5 text-forest" />
-        )}
+        <div
+          className={cn(
+            "shrink-0 grid place-items-center w-6 h-6 rounded-full border-2 transition-brand",
+            selected ? "bg-vitality border-vitality" : "border-forest/20"
+          )}
+          aria-hidden
+        >
+          {selected && <Check className="w-3.5 h-3.5 text-forest" strokeWidth={3} />}
+        </div>
       </div>
-      {description && (
-        <p className="text-sm text-muted">{description}</p>
-      )}
-    </div>
+    </button>
   )
 }
