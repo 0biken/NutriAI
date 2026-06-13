@@ -80,7 +80,7 @@ export default function TrackerPage() {
 
       // Add to daily log
       const today = new Date().toISOString().split('T')[0];
-      const currentLog = getMealLogForDate(today) || {
+      const currentLog: MealLog = getMealLogForDate(today) || {
         id: "log-" + today,
         user_id: profile.id,
         date: today,
