@@ -80,14 +80,14 @@ export default function TrackerPage() {
 
       // Add to daily log
       const today = new Date().toISOString().split('T')[0];
-      const currentLog = getMealLogForDate(today) || {
+      const currentLog: MealLog = getMealLogForDate(today) || {
         id: "log-" + today,
         user_id: profile.id,
         date: today,
         entries: [],
         daily_totals: { calories: 0, protein_g: 0, carbs_g: 0, fats_g: 0, sodium_mg: 0, sugar_g: 0, cost_ngn: 0 } as any,
         target_adherence: { calories: 0, protein_g: 0, carbs_g: 0, fats_g: 0, sodium_mg: 0, sugar_g: 0, fiber_g: 0 } as any,
-        scanned_meals: []
+        scanned_meals: [] as SnapScanResult[]
       };
 
       currentLog.scanned_meals.push(result);
