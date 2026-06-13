@@ -20,7 +20,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isLoaded && !isSignedIn) return;
+    if (isLoaded && !isSignedIn) { router.push("/sign-in"); return; }
     if (isLoaded && isSignedIn) {
       const p = getProfile();
       if (!p) {

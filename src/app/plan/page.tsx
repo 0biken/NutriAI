@@ -27,7 +27,7 @@ export default function PlanPage() {
   const [expandedDay, setExpandedDay] = useState<number>(0);
 
   useEffect(() => {
-    if (isLoaded && !isSignedIn) return;
+    if (isLoaded && !isSignedIn) { router.push("/sign-in"); return; }
 
     if (isLoaded && isSignedIn) {
       const p = getProfile();

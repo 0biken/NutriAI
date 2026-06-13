@@ -13,8 +13,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      // Clerk handles this via proxy/middleware for full route protection, 
-      // but this is a client-side safety net.
+      router.push("/sign-in");
       return;
     }
 
