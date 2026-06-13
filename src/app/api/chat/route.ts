@@ -57,7 +57,7 @@ Respond to the user's latest message based on the conversation history.`;
     }));
 
     const responseStream = await ai.models.generateContentStream({
-      model: 'gemini-1.5-pro',
+      model: 'gemini-2.5-flash',
       contents: geminiContents,
       config: {
         systemInstruction: { parts: [{ text: systemPrompt }] },
