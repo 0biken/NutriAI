@@ -273,6 +273,11 @@ export interface SnapScanResult {
   }[];
   total_nutrients: NutrientTargets;
   gemini_explanation: string;          // raw text from Gemini for display
+  clinical_flags?: {
+    high_sodium?: boolean;
+    high_gi?: boolean;
+    iron_rich?: boolean;
+  };
   added_to_log: boolean;
 }
 

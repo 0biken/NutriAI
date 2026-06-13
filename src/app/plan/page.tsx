@@ -34,6 +34,7 @@ export default function PlanPage() {
       if (!p) {
         router.push("/onboarding");
       } else {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setProfile(p);
         const existingPlan = getLatestMealPlan();
         if (existingPlan) setMealPlan(existingPlan);
@@ -76,7 +77,7 @@ export default function PlanPage() {
         generated_at: new Date().toISOString(),
         week_start: new Date().toISOString().split('T')[0],
         context: {
-          cycle_phase: cyclePhase as any,
+          cycle_phase: cyclePhase as MealPlan["context"]["cycle_phase"],
           budget_ngn: profile.monthly_budget_ngn,
           active_conditions: profile.conditions,
           goal: profile.goal
@@ -180,13 +181,13 @@ export default function PlanPage() {
                     </div>
                   )}
                   <div className="grid md:grid-cols-2 gap-4">
-                    {Object.entries(day.meals).map(([mealType, meal]: [string, any]) => (
+                    {Object.entries(day.meals).map(([mealType, meal]: [string, { name: string; annotation?: { label: string; reason: string } }]) => (
                       <div key={mealType} className="bg-warm-white p-4 rounded-lg">
                         <p className="text-xs font-bold text-muted uppercase tracking-wider mb-2">{mealType}</p>
                         <h4 className="font-semibold text-forest mb-1">{meal.name}</h4>
                         {meal.annotation && (
                           <span className="inline-block px-2 py-1 bg-vitality/20 text-forest text-xs rounded-full mb-2">
-                            {meal.annotation.note || meal.annotation.benefit || "Healthy Choice"}
+                            {meal.annotation.label || meal.annotation.reason || "Healthy Choice"}
                           </span>
                         )}
                       </div>

@@ -27,6 +27,7 @@ export default function ChatPage() {
         router.push("/onboarding");
         return;
       }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProfile(p);
       
       let currentSession = getChatSession();

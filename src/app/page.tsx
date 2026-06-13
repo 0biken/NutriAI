@@ -7,7 +7,7 @@ import { getProfile } from "@/lib/storage";
 import { UserProfile } from "@/lib/types";
 
 export default function Dashboard() {
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
 
@@ -23,6 +23,7 @@ export default function Dashboard() {
       if (!localProfile) {
         router.push("/onboarding");
       } else {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setProfile(localProfile);
       }
     }

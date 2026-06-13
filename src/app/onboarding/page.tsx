@@ -8,7 +8,7 @@ import { calculateTargets } from "@/lib/nutrition";
 import { Button } from "@/components/ui/button";
 import { SelectCard } from "@/components/ui/select-card";
 import { ProgressBar } from "@/components/ui/progress-bar";
-import { Activity, Target, AlertCircle, Calendar } from "lucide-react";
+import { Target, AlertCircle } from "lucide-react";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
@@ -48,7 +48,7 @@ export default function Onboarding() {
       height_cm: profile.height_cm || 170,
       conditions: profile.conditions || [],
       goal: ((profile.goal as string) === "pregnancy" ? "pregnancy_nutrition" : profile.goal) as "weight_loss" | "muscle_gain" | "maintenance" | "manage_condition" | "pregnancy_nutrition",
-      activity_level: profile.activity_level as any,
+      activity_level: profile.activity_level as UserProfile["activity_level"],
       dietary_restrictions: profile.dietary_restrictions || [],
       monthly_budget_ngn: profile.monthly_budget_ngn || 50000,
       daily_budget_ngn: Math.round((profile.monthly_budget_ngn || 50000) / 30),
@@ -58,7 +58,7 @@ export default function Onboarding() {
       ...(profile.gender === 'female' && cycle.last_period_start && {
         cycle: {
           last_period_start: cycle.last_period_start,
-          cycle_length_days: (cycle as any).average_length_days || 28,
+          cycle_length_days: cycle.cycle_length_days || 28,
           period_length_days: 5,
           has_pcos: profile.conditions?.includes('pcos') || false,
           current_phase: "follicular",
@@ -76,9 +76,9 @@ export default function Onboarding() {
   const toggleCondition = (c: string) => {
     setProfile(p => ({
       ...p,
-      conditions: p.conditions?.includes(c as any) 
+      conditions: p.conditions?.includes(c as NonNullable<UserProfile["conditions"]>[number]) 
         ? p.conditions.filter(x => x !== c)
-        : [...(p.conditions || []), c as any]
+        : [...(p.conditions || []), c as NonNullable<UserProfile["conditions"]>[number]]
     }));
   };
 
@@ -114,7 +114,7 @@ export default function Onboarding() {
                 <div className="grid gap-2">
                   <label className="text-sm font-medium">Gender</label>
                   <select className="border rounded-md p-2 bg-white"
-                    value={profile.gender || ""} onChange={e => setProfile({...profile, gender: e.target.value as any})}>
+                    value={profile.gender || ""} onChange={e => setProfile({...profile, gender: e.target.value as UserProfile["gender"]})}>
                     <option value="">Select...</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -138,7 +138,7 @@ export default function Onboarding() {
           {step === 2 && (
             <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <h2 className="text-xl font-semibold text-forest mb-2">Health Conditions</h2>
-              <p className="text-sm text-muted mb-2">Select any that apply to you. We'll adjust your macro limits automatically.</p>
+              <p className="text-sm text-muted mb-2">Select any that apply to you. We&apos;ll adjust your macro limits automatically.</p>
               
               <div className="grid gap-3">
                 {[
@@ -152,7 +152,7 @@ export default function Onboarding() {
                     title={cond.title}
                     description={cond.desc}
                     icon={<AlertCircle className="w-5 h-5" />}
-                    selected={profile.conditions?.includes(cond.id as any)}
+                    selected={profile.conditions?.includes(cond.id as NonNullable<UserProfile["conditions"]>[number])}
                     onClick={() => toggleCondition(cond.id)}
                   />
                 ))}
@@ -177,14 +177,14 @@ export default function Onboarding() {
                     title={g.title}
                     icon={<Target className="w-5 h-5" />}
                     selected={profile.goal === g.id}
-                    onClick={() => setProfile({...profile, goal: g.id as any})}
+                    onClick={() => setProfile({...profile, goal: g.id as NonNullable<UserProfile["goal"]>})}
                   />
                 ))}
               </div>
 
               <label className="text-sm font-medium mt-4">Activity Level</label>
               <select className="border rounded-md p-2 bg-white"
-                value={profile.activity_level || ""} onChange={e => setProfile({...profile, activity_level: e.target.value as any})}>
+                value={profile.activity_level || ""} onChange={e => setProfile({...profile, activity_level: e.target.value as NonNullable<UserProfile["activity_level"]>})}>
                 <option value="">Select...</option>
                 <option value="sedentary">Sedentary (Little to no exercise)</option>
                 <option value="lightly_active">Lightly Active (1-3 days/week)</option>

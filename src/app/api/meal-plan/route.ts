@@ -89,10 +89,10 @@ Generate the plan now.`;
     const plan = JSON.parse(response.text);
     return NextResponse.json(plan);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Meal Plan Generation Error:', error);
     return NextResponse.json(
-      { error: 'Failed to generate meal plan', details: error.message },
+      { error: 'Failed to generate meal plan', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

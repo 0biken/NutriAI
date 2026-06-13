@@ -84,10 +84,10 @@ ${JSON.stringify(FOOD_DATABASE, null, 2)}`;
     const scanResult = JSON.parse(response.text);
     return NextResponse.json(scanResult);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Snap & Scan Error:', error);
     return NextResponse.json(
-      { error: 'Failed to scan meal', details: error.message },
+      { error: 'Failed to scan meal', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

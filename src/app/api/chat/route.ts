@@ -51,7 +51,7 @@ Respond to the user's latest message based on the conversation history.`;
     // The system instruction is provided in the `systemInstruction` field, but we can also just prepend it to the first message or use `systemInstruction` config.
     // The new @google/genai SDK supports `systemInstruction`.
     
-    const geminiContents = messages.map((msg: any) => ({
+    const geminiContents = messages.map((msg: { role: string; content: string }) => ({
       role: msg.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: msg.content }]
     }));
@@ -90,10 +90,10 @@ Respond to the user's latest message based on the conversation history.`;
       },
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Chat API Error:', error);
     return NextResponse.json(
-      { error: 'Failed to chat', details: error.message },
+      { error: 'Failed to chat', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

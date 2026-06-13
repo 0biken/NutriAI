@@ -7,7 +7,7 @@ import { Camera, Upload, AlertCircle, CheckCircle2 } from "lucide-react";
 import { fileToBase64 } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { getProfile, getMealLogForDate, saveMealLog } from "@/lib/storage";
-import { UserProfile, MealLog, SnapScanResult, NutrientTargets } from "@/lib/types";
+import { UserProfile, MealLog, SnapScanResult } from "@/lib/types";
 
 export default function TrackerPage() {
   const { isLoaded, isSignedIn } = useUser();
@@ -30,8 +30,10 @@ export default function TrackerPage() {
       const p = getProfile();
       if (!p) router.push("/onboarding");
       else {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setProfile(p);
         const today = new Date().toISOString().split('T')[0];
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setDailyLog(getMealLogForDate(today));
       }
     }
@@ -73,6 +75,7 @@ export default function TrackerPage() {
         foods_detected: data.foods_detected,
         total_nutrients: data.total_nutrients,
         gemini_explanation: data.explanation,
+        clinical_flags: data.clinical_flags,
         added_to_log: true
       };
 
@@ -85,8 +88,8 @@ export default function TrackerPage() {
         user_id: profile.id,
         date: today,
         entries: [],
-        daily_totals: { calories: 0, protein_g: 0, carbs_g: 0, fats_g: 0, sodium_mg: 0, sugar_g: 0, cost_ngn: 0 } as any,
-        target_adherence: { calories: 0, protein_g: 0, carbs_g: 0, fats_g: 0, sodium_mg: 0, sugar_g: 0, fiber_g: 0 } as any,
+        daily_totals: { calories: 0, protein_g: 0, carbs_g: 0, fats_g: 0, sodium_mg: 0, sugar_g: 0, cost_ngn: 0 } as MealLog["daily_totals"],
+        target_adherence: { calories: 0, protein_g: 0, carbs_g: 0, fats_g: 0, sodium_mg: 0, sugar_g: 0, fiber_g: 0 } as MealLog["target_adherence"],
         scanned_meals: []
       };
 
@@ -118,6 +121,7 @@ export default function TrackerPage() {
       <div className="bg-white rounded-2xl border border-forest/10 p-4 mb-6 shadow-sm overflow-hidden">
         {imagePreview ? (
           <div className="relative rounded-xl overflow-hidden mb-4 bg-black/5 aspect-square flex items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
             
             {scanning && (
@@ -204,15 +208,14 @@ export default function TrackerPage() {
             </div>
           </div>
 
-          {(data => data.high_sodium || data.high_gi)(scanResult as any) && (
+          {(scanResult.clinical_flags?.high_sodium || scanResult.clinical_flags?.high_gi) && (
             <div className="bg-red-50 p-3 rounded-lg border border-red-100 flex gap-2 items-start">
               <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-semibold text-red-700">Clinical Flags</p>
                 <p className="text-xs text-red-600">
-                  {/* Note: The returned schema puts flags inside clinical_flags but I cast to any here to catch if it's flat or nested depending on Gemini's exact output */}
-                  {((scanResult as any).clinical_flags?.high_sodium || (scanResult as any).high_sodium) && "High Sodium detected. "}
-                  {((scanResult as any).clinical_flags?.high_gi || (scanResult as any).high_gi) && "High Glycemic Index detected. "}
+                  {scanResult.clinical_flags?.high_sodium && "High Sodium detected. "}
+                  {scanResult.clinical_flags?.high_gi && "High Glycemic Index detected. "}
                 </p>
               </div>
             </div>
@@ -222,14 +225,17 @@ export default function TrackerPage() {
 
       {/* Today's Log */}
       <div className="mb-4">
-        <h3 className="font-bold text-forest mb-4">Today's Scans</h3>
+        <h3 className="font-bold text-forest mb-4">Today&apos;s Scans</h3>
         {dailyLog?.scanned_meals?.length ? (
           <div className="space-y-3">
             {dailyLog.scanned_meals.map(scan => (
               <div key={scan.id} className="bg-white p-3 rounded-xl border border-forest/10 flex justify-between items-center">
                 <div className="flex items-center gap-3">
                   {scan.image_base64 ? (
-                    <img src={`data:image/jpeg;base64,${scan.image_base64}`} alt="Thumb" className="w-12 h-12 rounded-lg object-cover" />
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={`data:image/jpeg;base64,${scan.image_base64}`} alt="Thumb" className="w-12 h-12 rounded-lg object-cover" />
+                    </>
                   ) : (
                     <div className="w-12 h-12 rounded-lg bg-warm-white flex items-center justify-center">🍽️</div>
                   )}
@@ -242,7 +248,7 @@ export default function TrackerPage() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted">You haven't scanned any meals today.</p>
+          <p className="text-sm text-muted">You haven&apos;t scanned any meals today.</p>
         )}
       </div>
     </div>
