@@ -85,6 +85,14 @@ body {
   text-transform: uppercase;
 }
 
+/* ── Scan-line animation (tracker overlay) ──────────────────── */
+@keyframes scan {
+  0%   { transform: translateY(0);     opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(100%);  opacity: 0; }
+}
+
 /* ── Reduced motion respect ─────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }

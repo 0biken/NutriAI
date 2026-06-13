@@ -3,24 +3,40 @@
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { Send, Bot, User as UserIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Send, Sparkles, Languages, Heart } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { getProfile, getChatSession, saveChatSession } from "@/lib/storage";
 import { UserProfile, ChatSession, ChatMessage } from "@/lib/types";
+
+const SUGGESTED_PROMPTS_GENERAL = [
+  "What can I eat for breakfast under ₦500?",
+  "Is eba safe for diabetes?",
+  "Best Nigerian foods for hypertension?",
+];
+
+const SUGGESTED_BY_CONDITION: Record<string, string[]> = {
+  pcos:           ["What foods balance PCOS?",        "Magnesium-rich Nigerian meals?",      "Iron-rich snacks for luteal phase?"],
+  diabetes:       ["Low-GI Nigerian swallows?",       "Can I still eat jollof rice?",         "Snacks that won't spike sugar?"],
+  type2_diabetes: ["Low-GI Nigerian swallows?",       "Can I still eat jollof rice?",         "Snacks that won't spike sugar?"],
+  hypertension:   ["How do I season without Maggi?",  "Low-sodium soups I can make?",         "What raises BP fast — avoid?"],
+  pregnancy:      ["Iron-rich foods for pregnancy?",  "Folate-heavy Nigerian meals?",         "Foods to avoid this trimester?"],
+  obesity:        ["Filling low-cal Nigerian meals?", "Healthy swallow alternatives?",        "Snacks under 200 kcal?"],
+};
 
 export default function ChatPage() {
   const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
-  
+
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<ChatSession | null>(null);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
-  
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (isLoaded && !isSignedIn) { router.push("/sign-in"); return; }
+    if (isLoaded && !isSignedIn) return;
     if (isLoaded && isSignedIn) {
       const p = getProfile();
       if (!p) {
@@ -29,15 +45,15 @@ export default function ChatPage() {
       }
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setProfile(p);
-      
+
       let currentSession = getChatSession();
       if (!currentSession) {
-        // Generate proactive greeting based on profile
-        let greeting = `Hello ${p.name}! I'm NutriAI, your clinical nutrition assistant. `;
-        if (p.conditions && p.conditions.length > 0 && !p.conditions.includes('none')) {
-          greeting += `I'm here to help you manage your ${p.conditions.join(' and ')} with Nigerian food. `;
+        let greeting = `Hey ${p.name} 👋  I'm NutriAI. I know Nigerian food, I know the science, and I'll keep it short. `;
+        const realConds = p.conditions?.filter((c) => c !== "none") ?? [];
+        if (realConds.length) {
+          greeting += `I've got your ${realConds.join(" + ")} in mind. `;
         }
-        greeting += `What would you like to discuss today?`;
+        greeting += `Ask me anything — Pidgin, Yoruba, Igbo, Hausa, or English.`;
 
         currentSession = {
           id: "chat-" + Date.now(),
@@ -48,11 +64,12 @@ export default function ChatPage() {
             role: "assistant",
             content: greeting,
             timestamp: new Date().toISOString(),
-            language: "english"
-          }]
+            language: "english",
+          }],
         };
         saveChatSession(currentSession);
       }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSession(currentSession);
     }
   }, [isLoaded, isSignedIn, router]);
@@ -61,30 +78,37 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [session?.messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || !session || !profile || streaming) return;
+  // Auto-grow textarea
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 128) + "px";
+  }, [input]);
+
+  const sendMessage = async (raw: string) => {
+    const trimmed = raw.trim();
+    if (!trimmed || !session || !profile || streaming) return;
 
     const userMsg: ChatMessage = {
       id: "msg-" + Date.now(),
       role: "user",
-      content: input.trim(),
+      content: trimmed,
       timestamp: new Date().toISOString(),
-      language: "english" // For now, assume english, API handles auto-detection response
+      language: "english",
     };
-
     const newMessages = [...session.messages, userMsg];
-    
-    // Add an empty assistant message to hold the stream
+
     const assistantMsgId = "msg-" + (Date.now() + 1);
-    const updatedSession = { 
-      ...session, 
+    const updatedSession = {
+      ...session,
       messages: [...newMessages, {
         id: assistantMsgId,
         role: "assistant" as const,
         content: "",
         timestamp: new Date().toISOString(),
-        language: "english" as const
-      }] 
+        language: "english" as const,
+      }],
     };
 
     setSession(updatedSession);
@@ -92,18 +116,13 @@ export default function ChatPage() {
     setStreaming(true);
 
     try {
-      const cyclePhase = profile.gender === 'female' && profile.cycle 
-        ? profile.cycle.current_phase 
-        : null;
+      const cyclePhase =
+        profile.gender === "female" && profile.cycle ? profile.cycle.current_phase : null;
 
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: newMessages,
-          profile,
-          cyclePhase
-        })
+        body: JSON.stringify({ messages: newMessages, profile, cyclePhase }),
       });
 
       if (!res.ok || !res.body) throw new Error("Chat API failed");
@@ -115,12 +134,9 @@ export default function ChatPage() {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
+        assistantText += decoder.decode(value, { stream: true });
 
-        const chunk = decoder.decode(value, { stream: true });
-        assistantText += chunk;
-
-        // Update the last message in state with the streamed chunk
-        setSession(prev => {
+        setSession((prev) => {
           if (!prev) return prev;
           const msgs = [...prev.messages];
           msgs[msgs.length - 1].content = assistantText;
@@ -128,12 +144,10 @@ export default function ChatPage() {
         });
       }
 
-      // Save final session to local storage
-      setSession(prev => {
+      setSession((prev) => {
         if (prev) saveChatSession(prev);
         return prev;
       });
-
     } catch (err) {
       console.error(err);
       alert("Error communicating with AI.");
@@ -145,79 +159,121 @@ export default function ChatPage() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      sendMessage(input);
     }
   };
 
   if (!isLoaded || !session) return <div className="min-h-screen bg-warm-white" />;
 
+  const isFirstAssistantOnly = session.messages.length === 1 && session.messages[0].role === "assistant";
+  const realConds = profile?.conditions?.filter((c) => c !== "none") ?? [];
+  const prompts =
+    realConds.length && SUGGESTED_BY_CONDITION[realConds[0]]
+      ? SUGGESTED_BY_CONDITION[realConds[0]]
+      : SUGGESTED_PROMPTS_GENERAL;
+
   return (
-    <div className="min-h-screen bg-warm-white flex flex-col pt-4 max-w-lg mx-auto pb-24">
-      {/* Header */}
-      <div className="px-4 py-3 border-b border-forest/10 flex items-center gap-3 bg-white sticky top-0 z-10">
-        <div className="w-10 h-10 rounded-full bg-vitality-d/20 flex items-center justify-center">
-          <Bot className="text-forest w-6 h-6" />
+    <div className="flex flex-col h-[calc(100dvh-72px)] max-w-2xl mx-auto bg-warm-white">
+      {/* ── Chat header ─────────────────────────────────────────── */}
+      <div className="flex items-center gap-3 px-5 py-3 bg-white border-b border-forest/10 shrink-0">
+        <div className="relative">
+          <div className="w-10 h-10 rounded-2xl bg-forest grid place-items-center">
+            <Heart className="w-5 h-5 text-vitality" strokeWidth={2.4} />
+          </div>
+          <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-vitality border-2 border-white" />
         </div>
-        <div>
-          <h1 className="font-bold text-forest">NutriAI Assistant</h1>
-          <p className="text-xs text-vitality-d font-medium">Online • Clinical RAG Enabled</p>
+        <div className="min-w-0">
+          <h1 className="font-semibold text-forest leading-tight">NutriAI</h1>
+          <p className="text-xs text-muted flex items-center gap-1.5">
+            <Languages className="w-3 h-3" />
+            5 languages · Clinical RAG
+          </p>
         </div>
       </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* ── Messages ────────────────────────────────────────────── */}
+      <div className="flex-1 overflow-y-auto px-4 py-5 space-y-3">
         {session.messages.map((msg) => {
           const isUser = msg.role === "user";
+          const isEmptyStreamingAssistant = streaming && msg.content === "" && !isUser;
+
           return (
             <div key={msg.id} className={isUser ? "flex justify-end gap-2" : "flex justify-start gap-2"}>
               {!isUser && (
-                <div className="w-8 h-8 rounded-full bg-forest/10 flex items-center justify-center shrink-0">
-                  <Bot className="w-4 h-4 text-forest" />
+                <div className="w-7 h-7 rounded-xl bg-vitality/20 grid place-items-center shrink-0 mt-0.5">
+                  <Heart className="w-3.5 h-3.5 text-forest" />
                 </div>
               )}
-              
-              <div className={"px-4 py-2 rounded-2xl max-w-[80%] " + (isUser ? "bg-forest text-warm-white rounded-br-sm" : "bg-white border border-forest/10 text-forest rounded-bl-sm shadow-sm")}>
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-                {streaming && msg.content === "" && !isUser && (
-                  <div className="flex gap-1 items-center h-4">
-                    <span className="w-1.5 h-1.5 bg-forest/40 rounded-full animate-bounce"></span>
-                    <span className="w-1.5 h-1.5 bg-forest/40 rounded-full animate-bounce delay-75"></span>
-                    <span className="w-1.5 h-1.5 bg-forest/40 rounded-full animate-bounce delay-150"></span>
+
+              <div
+                className={[
+                  "px-4 py-2.5 rounded-2xl max-w-[80%] transition-brand",
+                  isUser
+                    ? "bg-forest text-warm-white rounded-br-md"
+                    : "bg-white border border-forest/10 text-body-text rounded-bl-md shadow-sm",
+                ].join(" ")}
+              >
+                {isEmptyStreamingAssistant ? (
+                  <div className="flex gap-1 items-center h-5 py-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-forest/40 animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-forest/40 animate-pulse [animation-delay:150ms]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-forest/40 animate-pulse [animation-delay:300ms]" />
                   </div>
+                ) : (
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                 )}
               </div>
-
-              {isUser && (
-                <div className="w-8 h-8 rounded-full bg-vitality/20 flex items-center justify-center shrink-0">
-                  <UserIcon className="w-4 h-4 text-forest" />
-                </div>
-              )}
             </div>
           );
         })}
+
+        {/* Suggested prompts — only when the only message is the greeting */}
+        {isFirstAssistantOnly && !streaming && (
+          <div className="pt-1 pl-9 flex flex-wrap gap-1.5">
+            {prompts.map((p) => (
+              <button
+                key={p}
+                onClick={() => sendMessage(p)}
+                className="text-xs font-medium text-forest bg-white border border-forest/15 rounded-full px-3 py-1.5 hover:border-vitality hover:bg-vitality/10 transition-brand"
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <div className="p-4 bg-white border-t border-forest/10 fixed bottom-16 left-0 right-0 max-w-lg mx-auto">
+      {/* ── Composer ────────────────────────────────────────────── */}
+      <div className="shrink-0 bg-white border-t border-forest/10 px-3 pt-3 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
         <div className="flex items-end gap-2">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask about local foods, substitutes..."
-            className="flex-1 border border-forest/20 rounded-xl p-3 max-h-32 min-h-[48px] resize-none focus:outline-none focus:ring-1 focus:ring-vitality text-sm"
-            rows={1}
-            disabled={streaming}
-          />
-          <Button 
-            onClick={handleSend} 
+          <div className="flex-1 relative">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask in English, Pidgin, Yoruba, Igbo or Hausa…"
+              rows={1}
+              disabled={streaming}
+              className="w-full resize-none rounded-2xl border border-forest/15 bg-white px-4 py-3 text-sm leading-snug text-forest placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-vitality focus:border-vitality transition-brand disabled:opacity-60"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => sendMessage(input)}
             disabled={!input.trim() || streaming}
-            className="h-12 w-12 rounded-xl shrink-0 p-0"
+            aria-label="Send"
+            className="h-11 w-11 rounded-full grid place-items-center bg-vitality text-forest shadow-sm hover:bg-vitality-d transition-brand disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vitality focus-visible:ring-offset-2 focus-visible:ring-offset-white shrink-0"
           >
-            <Send className="w-5 h-5" />
-          </Button>
+            {streaming ? <Sparkles className="w-4 h-4 animate-pulse" /> : <Send className="w-4 h-4" />}
+          </button>
         </div>
+        <p className="text-[10px] text-muted/80 mt-2 px-1 flex items-center gap-1.5">
+          <Badge variant="vitality" className="px-1.5 py-0 text-[9px]">RAG</Badge>
+          General nutrition guidance only. For diagnosis, see a dietitian.
+        </p>
       </div>
     </div>
   );
