@@ -11,9 +11,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'User profile is required' }, { status: 400 });
     }
 
-    const systemPrompt = `// NutriAI Prompt v1.0.0-hackathon
+    const systemPrompt = `// NutriAI Prompt v1.1.0-hackathon
 // Last updated: 2026-06-13
-// Model: gemini-1.5-pro
+// Model: gemini-2.5-flash
 
 You are NutriAI's clinical meal planning engine. You generate 7-day Nigerian meal plans that are culturally authentic, clinically safe, and budget-constrained.
 
@@ -31,9 +31,12 @@ RULES:
    - follicular: lean protein, complex carbs
    - ovulation: antioxidants, omega-3
    - luteal: magnesium, complex carbs, B6
-5. Every meal must have a clinically relevant annotation (e.g. "+Iron", "Low GI", "Low Sodium").
-6. Provide a smart substitute for at least 2 meals per day (cheaper or condition-better alternative).
-7. Return VALID JSON matching the MealPlan schema exactly. No markdown, no commentary outside JSON.
+5. Every meal must have a clinically relevant annotation. Use exactly two string fields:
+   - "label": a short tag (e.g. "+Iron", "Low GI", "Low Sodium", "+Magnesium")
+   - "reason": one sentence explaining why this meal fits the user's profile
+6. DO NOT include a "substitute" field. Substitutes are generated on demand later.
+7. Keep meal "foods" arrays minimal: one short string per food (no nested objects).
+8. Return VALID JSON matching the schema below exactly. No markdown, no commentary outside JSON.
 
 OUTPUT SCHEMA:
 {
@@ -45,10 +48,15 @@ OUTPUT SCHEMA:
       "date": "YYYY-MM-DD",
       "cycle_phase_note": "string or null",
       "meals": {
-        "breakfast": { "name": "string", "foods": [...], "totals": {...}, "annotation": {...}, "substitute": {...} },
-        "lunch": { ... },
-        "dinner": { ... },
-        "snack": { ... }
+        "breakfast": {
+          "name": "string",
+          "foods": ["string"],
+          "totals": { "calories": number, "protein_g": number, "carbs_g": number, "fats_g": number, "fiber_g": number, "sodium_mg": number, "glycemic_load": number, "cost_ngn": number },
+          "annotation": { "label": "string", "reason": "string" }
+        },
+        "lunch":  { ... same shape as breakfast },
+        "dinner": { ... same shape as breakfast },
+        "snack":  { ... same shape as breakfast }
       },
       "daily_totals": { "calories": number, "protein_g": number, "carbs_g": number, "fats_g": number, "sodium_mg": number, "iron_mg": number, "folate_mcg": number, "calcium_mg": number, "potassium_mg": number, "magnesium_mg": number, "fiber_g": number, "cost_ngn": number },
       "target_adherence": { "calories_pct": number, "protein_pct": number, "sodium_pct": number }
