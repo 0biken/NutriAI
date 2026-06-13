@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { ai } from '@/lib/gemini';
+import { ai, classifyGeminiError } from '@/lib/gemini';
 import { FOOD_DATABASE } from '@/lib/food-db';
 
 export async function POST(req: Request) {
@@ -86,9 +86,7 @@ ${JSON.stringify(FOOD_DATABASE, null, 2)}`;
 
   } catch (error: unknown) {
     console.error('Snap & Scan Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to scan meal', details: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
-    );
+    const { status, body, headers } = classifyGeminiError(error, 'Failed to scan meal');
+    return NextResponse.json(body, { status, headers });
   }
 }

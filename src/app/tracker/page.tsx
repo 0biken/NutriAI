@@ -177,7 +177,6 @@ export default function TrackerPage() {
             <input
               type="file"
               accept="image/*"
-              capture="environment"
               className="hidden"
               ref={fileInputRef}
               onChange={handleImageSelect}
