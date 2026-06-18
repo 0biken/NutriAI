@@ -58,6 +58,7 @@ export default function RootLayout({
           <Navigation />
           <Analytics />
         </ClerkProvider>
+        <Analytics />
       </body>
     </html>
   );
